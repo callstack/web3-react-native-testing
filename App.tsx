@@ -1,35 +1,50 @@
 import "./polyfills";
 
-import React from "react";
+import {
+  Web3Modal,
+  W3mButton,
+  createWeb3Modal,
+  defaultWagmiConfig,
+} from "@web3modal/wagmi-react-native";
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { WagmiProvider, createConfig, http } from "wagmi";
-import { mainnet, sepolia } from "wagmi/chains";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { arbitrum, mainnet, polygon } from "viem/chains";
+import { WagmiConfig } from "wagmi";
 
 const projectId = "e72f41e9c11cda6247c0a5796ec8d2c1";
 
-export const config = createConfig({
-  chains: [mainnet, sepolia],
-  transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
+const metadata = {
+  name: "Web3Modal RN",
+  description: "Web3Modal RN Example",
+  url: "https://web3modal.com",
+  icons: ["https://avatars.githubusercontent.com/u/37784886"],
+  redirect: {
+    native: "YOUR_APP_SCHEME://",
+    universal: "YOUR_APP_UNIVERSAL_LINK.com",
   },
-  multiInjectedProviderDiscovery: false,
-});
+};
 
-const queryClient = new QueryClient();
+const chains = [mainnet, polygon, arbitrum];
+
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
+
+createWeb3Modal({
+  projectId,
+  chains,
+  wagmiConfig,
+  enableAnalytics: true,
+});
 
 export default function App() {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <View style={styles.container}>
-          <Text>Open up App.js to start working on your app!</Text>
-          <StatusBar style="auto" />
-        </View>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <WagmiConfig config={wagmiConfig}>
+      <View style={styles.container}>
+        <W3mButton />
+        <StatusBar style="auto" />
+        <Web3Modal />
+      </View>
+    </WagmiConfig>
   );
 }
 
