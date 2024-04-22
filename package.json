@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "jest"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.21.0",
@@ -19,6 +20,8 @@
     "expo-application": "~5.8.4",
     "expo-status-bar": "~1.11.1",
     "fast-text-encoding": "^1.0.6",
+    "jest": "^29.3.1",
+    "jest-expo": "~50.0.4",
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-get-random-values": "~1.8.0",
@@ -29,7 +32,16 @@
     "wagmi": "1.4.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@testing-library/react-native": "^12.4.5",
+    "@types/jest": "^29.5.12"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@walletconnect/react-native-compat|@wagmi|wagmi)"
+    ],
+    "setupFilesAfterEnv": ["<rootDir>/setup-jest.tsx"]
   },
   "private": true
 }

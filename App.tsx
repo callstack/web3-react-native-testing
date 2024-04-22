@@ -2,15 +2,14 @@ import "./polyfills";
 
 import {
   Web3Modal,
-  W3mButton,
   createWeb3Modal,
   defaultWagmiConfig,
 } from "@web3modal/wagmi-react-native";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 import { arbitrum, mainnet, polygon } from "viem/chains";
 import { WagmiConfig } from "wagmi";
+import HomeScreen from "./src/HomeScreen";
 
 const projectId = "e72f41e9c11cda6247c0a5796ec8d2c1";
 
@@ -39,20 +38,9 @@ createWeb3Modal({
 export default function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <View style={styles.container}>
-        <W3mButton />
-        <StatusBar style="auto" />
-        <Web3Modal />
-      </View>
+      <StatusBar style="auto" />
+      <Web3Modal />
+      <HomeScreen />
     </WagmiConfig>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
