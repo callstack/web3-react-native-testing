@@ -1,7 +1,7 @@
 import "@testing-library/react-native/extend-expect";
 import React from "react";
 import { View as MockView } from "react-native";
-import { MockConnectButton } from "./testUtils";
+import { MockConnectButton } from "./src/test/mocks";
 
 jest.mock("@react-native-async-storage/async-storage", () => {
   return {

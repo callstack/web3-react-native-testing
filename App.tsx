@@ -7,9 +7,10 @@ import {
 } from "@web3modal/wagmi-react-native";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { arbitrum, mainnet, polygon } from "viem/chains";
+import { mainnet, sepolia } from "viem/chains";
 import { WagmiConfig } from "wagmi";
 import HomeScreen from "./src/HomeScreen";
+import { ToastProvider } from "react-native-toast-notifications";
 
 const projectId = "e72f41e9c11cda6247c0a5796ec8d2c1";
 
@@ -24,7 +25,7 @@ const metadata = {
   },
 };
 
-const chains = [mainnet, polygon, arbitrum];
+const chains = [mainnet, sepolia];
 
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
@@ -38,9 +39,11 @@ createWeb3Modal({
 export default function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <StatusBar style="auto" />
-      <Web3Modal />
-      <HomeScreen />
+      <ToastProvider>
+        <StatusBar style="auto" />
+        <Web3Modal />
+        <HomeScreen />
+      </ToastProvider>
     </WagmiConfig>
   );
 }
