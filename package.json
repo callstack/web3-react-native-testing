@@ -7,8 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "concurrently --names 'ANVIL,JEST' -c 'bgBlue.bold,bgMagenta.bold' 'anvil' 'jest'",
-    "test:watch": "concurrently --names 'ANVIL,JEST' -c 'bgBlue.bold,bgMagenta.bold' 'anvil' 'jest --watchAll'"
+    "test": "concurrently --names 'ANVIL,JEST' -c 'auto' 'anvil' 'jest'",
+    "test:watch": "concurrently --names 'ANVIL,JEST' -c 'auto' 'anvil' 'jest --watchAll'"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.21.0",
@@ -44,9 +44,7 @@
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@walletconnect/react-native-compat|@wagmi|wagmi)"
     ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/setup-jest.tsx"
-    ]
+    "setupFilesAfterEnv": ["<rootDir>/setup-jest.tsx"]
   },
   "private": true
 }

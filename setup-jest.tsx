@@ -20,3 +20,10 @@ jest.mock("@web3modal/wagmi-react-native", () => {
     W3mButton: () => <MockConnectButton />,
   };
 });
+
+// jest.mock("react-native", () => {
+//   const rn = jest.requireActual("react-native");
+//   const spy = jest.spyOn(rn.Animated, "View", "get");
+//   spy.mockImplementation(() => MockView);
+//   return rn;
+// });

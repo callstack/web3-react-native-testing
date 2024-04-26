@@ -1,8 +1,6 @@
-import { Button } from "react-native";
+import { Pressable, Text } from "react-native";
 import { useAccount, useConnect } from "wagmi";
-import * as viem from "viem";
 import * as MockReact from "react";
-import { FetchStatus, UseQueryResult } from "@tanstack/react-query";
 
 export type MockUseWaitForTransaction = {
   isLoading: boolean;
@@ -15,10 +13,12 @@ export function MockConnectButton() {
   const { connect, connectors } = useConnect();
 
   return (
-    <Button
-      title={isConnected ? address : "Connect Wallet"}
+    <Pressable
+      role="button"
       onPress={() => connect({ connector: connectors[0] })}
-    />
+    >
+      <Text>{isConnected ? address : "Connect Wallet"}</Text>
+    </Pressable>
   );
 }
 

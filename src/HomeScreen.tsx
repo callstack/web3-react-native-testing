@@ -1,6 +1,6 @@
 import { W3mButton } from "@web3modal/wagmi-react-native";
 import React, { useEffect } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { parseEther } from "viem";
 import {
@@ -11,18 +11,22 @@ import {
 } from "wagmi";
 
 function HomeScreen() {
+  const toast = useToast();
   const { isConnected } = useAccount();
   const { config, isError: estimateGasError } = usePrepareSendTransaction({
     to: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-    value: parseEther("0.001"),
+    value: parseEther("1000"),
   });
-  const { data: transaction, sendTransaction } = useSendTransaction(config);
+  const {
+    data: transaction,
+    sendTransaction,
+    isError: sendError,
+  } = useSendTransaction(config);
   const {
     isError: txError,
     isLoading: txLoading,
     isSuccess: txSuccess,
   } = useWaitForTransaction(transaction);
-  const toast = useToast();
 
   useEffect(() => {
     if (txLoading) {
@@ -35,7 +39,7 @@ function HomeScreen() {
   useEffect(() => {
     if (txError) {
       toast.show("Transaction failed ⚠️", {
-        type: "error",
+        type: "danger",
       });
     }
   }, [txError]);
@@ -48,21 +52,27 @@ function HomeScreen() {
     }
   }, [txSuccess]);
 
+  useEffect(() => {
+    if (estimateGasError || sendError) {
+      toast.show("Insufficient balance ⚠️", {
+        type: "danger",
+      });
+    }
+  }, [estimateGasError, sendError]);
+
   return (
     <View style={styles.container}>
       <W3mButton />
 
       {isConnected && (
         <View style={styles.transaction}>
-          {estimateGasError && <Text>Insufficient balance</Text>}
-
-          <Button
-            title="Send Transaction"
-            disabled={estimateGasError || txLoading}
-            onPress={() => {
-              sendTransaction();
-            }}
-          />
+          <Pressable
+            role="button"
+            disabled={txLoading}
+            onPress={() => sendTransaction?.()}
+          >
+            <Text>Send Transaction</Text>
+          </Pressable>
         </View>
       )}
     </View>

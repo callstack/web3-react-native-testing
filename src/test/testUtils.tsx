@@ -31,7 +31,11 @@ type ConnectionFlags = {
   noSwitchChain?: boolean;
 };
 
-const { chains, publicClient } = configureChains([foundry], [publicProvider()]);
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [foundry],
+  [publicProvider()],
+  { pollingInterval: 100 },
+);
 
 export const testClient = createTestClient({
   transport: http(),
@@ -64,13 +68,14 @@ export function createTestConfig(flags?: ConnectionFlags) {
   return createConfig({
     connectors: [mockConnector],
     publicClient,
+    webSocketPublicClient,
   });
 }
 
 export function Providers({ children, config }: ProvidersProps) {
   return (
     <WagmiConfig config={config}>
-      <ToastProvider>
+      <ToastProvider duration={1000}>
         <Web3Modal />
         {children}
       </ToastProvider>
