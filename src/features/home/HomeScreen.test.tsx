@@ -1,9 +1,9 @@
-import { act, screen, userEvent } from "@testing-library/react-native";
-import { renderWithProviders, testClient } from "./test/testUtils";
+import { screen, userEvent } from "@testing-library/react-native";
+import { renderWithProviders, testClient } from "../../test/testUtils";
 import HomeScreen from "./HomeScreen";
 import React from "react";
 import * as wagmi from "wagmi";
-import { useWaitForTransactionFailAfter200ms } from "./test/mocks";
+import { useWaitForTransactionFailAfter200ms } from "../../test/mocks";
 import { Hex } from "viem";
 
 const user = userEvent.setup();

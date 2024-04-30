@@ -1,5 +1,6 @@
 import "./polyfills";
 
+import { NavigationContainer } from "@react-navigation/native";
 import {
   Web3Modal,
   createWeb3Modal,
@@ -7,10 +8,11 @@ import {
 } from "@web3modal/wagmi-react-native";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
+import { ToastProvider } from "react-native-toast-notifications";
 import { mainnet, sepolia } from "viem/chains";
 import { WagmiConfig } from "wagmi";
-import HomeScreen from "./src/HomeScreen";
-import { ToastProvider } from "react-native-toast-notifications";
+import RootNavigator from "./src/navigation/RootNavigator";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const projectId = "e72f41e9c11cda6247c0a5796ec8d2c1";
 
@@ -39,11 +41,15 @@ createWeb3Modal({
 export default function App() {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <ToastProvider>
-        <StatusBar style="auto" />
-        <Web3Modal />
-        <HomeScreen />
-      </ToastProvider>
+      <StatusBar style="auto" />
+      <Web3Modal />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <ToastProvider>
+            <RootNavigator />
+          </ToastProvider>
+        </NavigationContainer>
+      </GestureHandlerRootView>
     </WagmiConfig>
   );
 }
