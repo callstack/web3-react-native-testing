@@ -15,11 +15,12 @@ import {
 import TransactionModal from "../transaction/TransactionModal";
 import ContactItem, { Contact } from "./ContactItem";
 
-const CONTACTS = [
+// TODO: Remove all ENS
+export const CONTACTS = [
   {
     id: "1",
     name: "Vitalik Buterin",
-    address: "vitalik.eth",
+    address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
   },
   {
     id: "2",
@@ -52,7 +53,7 @@ function HomeScreen() {
   const toast = useToast();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [selectedContact, setSelectedContact] = useState<Contact | undefined>(
-    undefined,
+    undefined
   );
   const { isConnected } = useAccount();
 
@@ -118,7 +119,7 @@ function HomeScreen() {
         sendError.message.substring(0, sendError.message.indexOf("\n")),
         {
           type: "danger",
-        },
+        }
       );
     }
   }, [sendError]);

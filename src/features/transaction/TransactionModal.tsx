@@ -44,6 +44,7 @@ function TransactionModal(
           <Text style={styles.nameText}>{contact?.name ?? ""}</Text>
         </Text>
         <Pressable
+          role="button"
           disabled={disabled}
           style={({ pressed }) => [
             { opacity: pressed ? 0.8 : 1 },

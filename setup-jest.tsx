@@ -1,4 +1,5 @@
 import "@testing-library/react-native/extend-expect";
+import "react-native-gesture-handler/jestSetup.js";
 import React from "react";
 import { View as MockView } from "react-native";
 import { MockConnectButton } from "./src/test/mocks";
@@ -21,9 +22,4 @@ jest.mock("@web3modal/wagmi-react-native", () => {
   };
 });
 
-// jest.mock("react-native", () => {
-//   const rn = jest.requireActual("react-native");
-//   const spy = jest.spyOn(rn.Animated, "View", "get");
-//   spy.mockImplementation(() => MockView);
-//   return rn;
-// });
+jest.mock("@gorhom/bottom-sheet", () => require("@gorhom/bottom-sheet/mock"));

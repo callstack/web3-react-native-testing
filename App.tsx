@@ -40,6 +40,7 @@ createWeb3Modal({
 
 export default function App() {
   return (
+    // TODO: Fix TS error
     <WagmiConfig config={wagmiConfig}>
       <StatusBar style="auto" />
       <Web3Modal />

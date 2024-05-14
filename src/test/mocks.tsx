@@ -8,6 +8,12 @@ export type MockUseWaitForTransaction = {
   isError: boolean;
 };
 
+type UsePrepareSendTransactionFail = {
+  to: string;
+  value: string;
+  enabled: boolean;
+};
+
 export function MockConnectButton() {
   const { isConnected, address } = useAccount();
   const { connect, connectors } = useConnect();
@@ -47,6 +53,44 @@ export function useWaitForTransactionFailAfter200ms() {
         isError: true,
       });
     }, 200);
+  }, []);
+
+  return state;
+}
+
+export function usePrepareSendTransactionFail({
+  to,
+  value,
+}: UsePrepareSendTransactionFail) {
+  const [state, setState] = MockReact.useState({
+    config: {
+      mode: "prepared",
+      to,
+      value,
+      accessList: undefined,
+      account: undefined,
+      data: undefined,
+      gas: 21000n,
+      gasPrice: undefined,
+      maxFeePerGas: undefined,
+      maxPriorityFeePerGas: undefined,
+      nonce: undefined,
+    },
+    isLoading: true,
+    isSuccess: false,
+    isError: false,
+    error: null,
+  });
+
+  MockReact.useEffect(() => {
+    setTimeout(() => {
+      setState({
+        ...state,
+        isLoading: false,
+        isSuccess: false,
+        isError: true,
+      });
+    }, 100);
   }, []);
 
   return state;
