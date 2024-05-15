@@ -1,6 +1,7 @@
 import { Pressable, Text } from "react-native";
 import { useAccount, useConnect } from "wagmi";
 import * as MockReact from "react";
+import { View as MockView } from "react-native";
 
 export type MockUseWaitForTransaction = {
   isLoading: boolean;
@@ -13,6 +14,26 @@ type UsePrepareSendTransactionFail = {
   value: string;
   enabled: boolean;
 };
+
+jest.mock("@react-native-async-storage/async-storage", () => {
+  return {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+  };
+});
+
+jest.mock("@web3modal/wagmi-react-native", () => {
+  const actual = jest.requireActual("@web3modal/wagmi-react-native");
+
+  return {
+    ...actual,
+    Web3Modal: () => <MockView />,
+    W3mButton: () => <MockConnectButton />,
+  };
+});
+
+jest.mock("@gorhom/bottom-sheet", () => require("@gorhom/bottom-sheet/mock"));
 
 export function MockConnectButton() {
   const { isConnected, address } = useAccount();

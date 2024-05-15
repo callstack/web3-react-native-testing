@@ -5,6 +5,7 @@ import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ToastProvider } from "react-native-toast-notifications";
 import {
+  Address,
   PublicClient,
   createTestClient,
   http,
@@ -25,13 +26,19 @@ type ConnectionFlags = {
 
 const chains = [foundry];
 
+const TEST_ACCOUNTS = [
+  {
+    address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" as Address,
+    key: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+  },
+];
+
 export const testClient = createTestClient({
   transport: http(),
   chain: chains[0],
   mode: "anvil",
-  account: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  // account: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-  key: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+  account: TEST_ACCOUNTS[0].address,
+  key: TEST_ACCOUNTS[0].key,
   pollingInterval: 100,
 })
   .extend(publicActions)

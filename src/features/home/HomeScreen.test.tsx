@@ -5,37 +5,23 @@ import {
   usePrepareSendTransactionFail,
   useWaitForTransactionFailAfter200ms,
 } from "../../test/mocks";
-import { renderWithProviders, testClient } from "../../test/testUtils";
+import { renderWithProviders, testClient } from "../../test/config";
 import { CONTACTS } from "./HomeScreen";
 import { connectWallet, pressFirstContact } from "../../test/utils";
 
 const user = userEvent.setup();
 let initialState: Hex = "0x";
 
-const prepareTestingEnvironment = async () => {
-  // Before all tests, set the second account's balance to 0 ETH
-  await testClient.setBalance({
-    address: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-    value: 0n,
-  });
-
-  // and dump the pristine state of the blockchain into a variable
+beforeAll(async () => {
+  // Before all tests, dump the pristine state of the blockchain into a variable
   const dump = await testClient.dumpState();
   initialState = dump;
-};
-
-const resetToInitialState = async () => {
-  // After each test, reset the blockchain to the pristine state, so that tests are isolated
-  await testClient.loadState({ state: initialState });
-  await testClient.setAutomine(true);
-};
-
-beforeAll(async () => {
-  return prepareTestingEnvironment();
 });
 
 afterEach(async () => {
-  return resetToInitialState();
+  // After each test, reset the blockchain to the pristine state, so that tests are isolated
+  await testClient.loadState({ state: initialState });
+  await testClient.setAutomine(true);
 });
 
 test("user is disconnected", async () => {

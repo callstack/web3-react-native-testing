@@ -15,7 +15,6 @@ import {
 import TransactionModal from "../transaction/TransactionModal";
 import ContactItem, { Contact } from "./ContactItem";
 
-// TODO: Remove all ENS
 export const CONTACTS = [
   {
     id: "1",
@@ -25,22 +24,22 @@ export const CONTACTS = [
   {
     id: "2",
     name: "Thiago Brezinski",
-    address: "thiagobrez.eth",
+    address: "0x0CBA9374CD43bF34E0402b10227bB022F2fea5A7",
   },
   {
     id: "3",
-    name: "Gavin Wood",
-    address: "gavin.eth",
+    name: "Punk 1234",
+    address: "0x4fe547Fa933d705b0cBB433277d78A3687Fd1D3D",
   },
   {
     id: "4",
     name: "Nick Johnson",
-    address: "nick.eth",
+    address: "0xb8c2C29ee19D8307cb7255e1Cd9CbDE883A267d5",
   },
   {
     id: "5",
     name: "Hal Finney",
-    address: "hal.eth",
+    address: "0x077E22D4D11f898Eb379DBac2441DfAa5839373f",
   },
   {
     id: "6",
