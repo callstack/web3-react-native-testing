@@ -1,11 +1,12 @@
 import { screen, userEvent } from "@testing-library/react-native";
-import { Hex } from "viem";
+import { Hex, parseEther } from "viem";
 import * as wagmi from "wagmi";
+import { useWaitForTransactionFailAfter200ms } from "../../test/mocks";
 import {
-  usePrepareSendTransactionFail,
-  useWaitForTransactionFailAfter200ms,
-} from "../../test/mocks";
-import { renderWithProviders, testClient } from "../../test/config";
+  TEST_ACCOUNTS,
+  renderWithProviders,
+  testClient,
+} from "../../test/config";
 import { CONTACTS } from "./HomeScreen";
 import { connectWallet, pressFirstContact } from "../../test/utils";
 
@@ -75,11 +76,11 @@ test("transaction succeeds", async () => {
 });
 
 test("transaction fails before being sent - insufficient balance", async () => {
-  // For some reason, the usePrepareSendTransaction hook does not fail for insufficient balance during tests.
-  const spy = jest
-    .spyOn(wagmi, "usePrepareSendTransaction")
-    // @ts-expect-error mockImplementation is not typed
-    .mockImplementation(usePrepareSendTransactionFail);
+  // Manually set the balance of the test account to 0, to simulate insufficient balance error
+  await testClient.setBalance({
+    address: TEST_ACCOUNTS[0].address,
+    value: 0n,
+  });
 
   renderWithProviders();
   await connectWallet(user);
@@ -92,7 +93,7 @@ test("transaction fails before being sent - insufficient balance", async () => {
   // Find the confirm button
   const confirmButton = screen.getByRole("button", { name: /confirm/i });
 
-  // Button should be disabled if preparing the transaction fails
+  // Button should be disabled if balance is insufficient
   expect(confirmButton).toBeOnTheScreen();
   expect(confirmButton).toBeDisabled();
 
@@ -101,9 +102,6 @@ test("transaction fails before being sent - insufficient balance", async () => {
     /insufficient balance/i
   );
   expect(insufficientBalanceToast).toBeOnTheScreen();
-
-  // Restore mock
-  spy.mockRestore();
 });
 
 test("transaction fails after being sent", async () => {
@@ -124,7 +122,7 @@ test("transaction fails after being sent", async () => {
   // Find the confirm button
   const confirmButton = screen.getByRole("button", { name: /confirm/i });
 
-  // Button should be enabled before sending the transaction
+  // Button should be enabled if balance is sufficient
   expect(confirmButton).toBeOnTheScreen();
   expect(confirmButton).toBeEnabled();
 
@@ -154,14 +152,14 @@ test("confirm button should disable while loading", async () => {
   // Find the confirm button
   const confirmButton = screen.getByRole("button", { name: /confirm/i });
 
-  // Button should be enabled before sending the transaction
+  // Button should be enabled if balance is sufficient
   expect(confirmButton).toBeOnTheScreen();
   expect(confirmButton).toBeEnabled();
 
   // Press the confirm button
   await user.press(confirmButton);
 
-  // Button should be disabled while loading
+  // Button should be disabled while waiting for the transaction
   expect(confirmButton).toBeDisabled();
 
   // Enable mining blocks again

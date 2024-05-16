@@ -8,6 +8,7 @@ import { useToast } from "react-native-toast-notifications";
 import { parseEther } from "viem";
 import {
   useAccount,
+  useBalance,
   usePrepareSendTransaction,
   useSendTransaction,
   useWaitForTransaction,
@@ -48,21 +49,25 @@ export const CONTACTS = [
   },
 ];
 
+const TX_PRICE = parseEther("0.0001");
+
 function HomeScreen() {
   const toast = useToast();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [selectedContact, setSelectedContact] = useState<Contact | undefined>(
     undefined
   );
-  const { isConnected } = useAccount();
 
-  const {
-    config,
-    isLoading: estimateGasLoading,
-    isError: estimateGasError,
-  } = usePrepareSendTransaction({
+  const { isConnected, address } = useAccount();
+
+  const { data: balance, isFetched: isBalanceFetched } = useBalance({
+    address,
+  });
+  const isInsufficientBalance = (balance?.value ?? 0) < TX_PRICE;
+
+  const { config } = usePrepareSendTransaction({
     to: selectedContact?.address ?? "",
-    value: parseEther("0.0001"),
+    value: TX_PRICE,
     enabled: !!selectedContact,
   });
 
@@ -105,12 +110,12 @@ function HomeScreen() {
   }, [txSuccess]);
 
   useEffect(() => {
-    if (estimateGasError) {
+    if (selectedContact && isBalanceFetched && isInsufficientBalance) {
       toast.show("Insufficient balance ⚠️", {
         type: "warning",
       });
     }
-  }, [estimateGasError]);
+  }, [selectedContact, balance]);
 
   useEffect(() => {
     if (sendError) {
@@ -155,7 +160,7 @@ function HomeScreen() {
         <TransactionModal
           ref={bottomSheetModalRef}
           contact={selectedContact}
-          disabled={estimateGasLoading || estimateGasError || txLoading}
+          disabled={isInsufficientBalance || txLoading || !sendTransaction}
           onConfirm={() => sendTransaction?.()}
         />
       </BottomSheetModalProvider>
