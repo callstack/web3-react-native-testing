@@ -1,6 +1,6 @@
 # web3-react-native-testing
 
-This repository showcases how to configure a React Native Expo project with [Wagmi](https://wagmi.sh/), [Viem](https://viem.sh/) and [WalletConnect Web3Modal](https://docs.walletconnect.com/web3modal/about), and how to write Unit & Integration tests for the main features using [Jest](https://jestjs.io/) and [Anvil](https://book.getfoundry.sh/anvil/).
+This repository showcases how to configure a React Native Expo project with [Wagmi](https://wagmi.sh/), [Viem](https://viem.sh/) and [WalletConnect Web3Modal](https://docs.walletconnect.com/web3modal/about), and how to write Unit & Integration tests for the main features using [Jest](https://jestjs.io/), [Anvil](https://book.getfoundry.sh/anvil/) and [React Native Testing Library](https://callstack.github.io/react-native-testing-library/).
 
 ![demo.gif](demo.gif)
 
