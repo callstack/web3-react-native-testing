@@ -17,15 +17,10 @@ import { WagmiConfig, createConfig } from "wagmi";
 import { MockConnector } from "wagmi/connectors/mock";
 import RootNavigator from "../navigation/RootNavigator";
 
-type ConnectionFlags = {
-  isAuthorized?: boolean;
-  failConnect?: boolean;
-  failSwitchChain?: boolean;
-  noSwitchChain?: boolean;
-};
-
+// Choose chains to use while testing. Foundry will point to Anvil
 const chains = [foundry];
 
+// Account we will use while testing. This is Anvil's first account
 export const TEST_ACCOUNTS = [
   {
     address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" as Address,
@@ -33,40 +28,44 @@ export const TEST_ACCOUNTS = [
   },
 ];
 
+// Create a Viem Test Client, and connect to Anvil
 export const testClient = createTestClient({
   transport: http(),
   chain: chains[0],
   mode: "anvil",
+  // Pass the account address and private key, so we can sign transactions
   account: TEST_ACCOUNTS[0].address,
   key: TEST_ACCOUNTS[0].key,
+  // Use a low pollingInterval to speed up tests
   pollingInterval: 100,
 })
+  // Extend the client with public and wallet actions, so it can also act as a Public Client and Wallet Client
   .extend(publicActions)
   .extend(walletActions);
 
-export function createTestConfig(flags?: ConnectionFlags) {
-  const mockConnector = new MockConnector({
-    chains,
-    options: {
-      walletClient: testClient,
-      flags,
-    },
-  });
-
-  return createConfig({
-    connectors: [mockConnector],
+export function renderWithProviders() {
+  // Create a Wagmi Config specifically for testing
+  // Pass the testClient as the connector walletClient
+  // Pass the testClient as the config publicClient
+  const testConfig = createConfig({
+    connectors: [
+      new MockConnector({
+        chains,
+        options: {
+          walletClient: testClient,
+        },
+      }),
+    ],
     publicClient: testClient as PublicClient,
   });
-}
-
-export function renderWithProviders(flags?: ConnectionFlags) {
-  const config = createTestConfig(flags);
 
   return render(
-    <WagmiConfig config={config}>
+    // Pass the test Wagmi Config to the Wagmi Provider
+    <WagmiConfig config={testConfig}>
       <Web3Modal />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
+          {/* Use smaller durations for the Toast library to speed up tests */}
           <ToastProvider duration={1000} animationDuration={0}>
             <RootNavigator />
           </ToastProvider>

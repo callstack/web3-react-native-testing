@@ -3,18 +3,13 @@ import { useAccount, useConnect } from "wagmi";
 import * as MockReact from "react";
 import { View as MockView } from "react-native";
 
-export type MockUseWaitForTransaction = {
-  isLoading: boolean;
-  isSuccess: boolean;
-  isError: boolean;
-};
+// Mock React Native Gesture Handler
+import "react-native-gesture-handler/jestSetup.js";
 
-type UsePrepareSendTransactionFail = {
-  to: string;
-  value: string;
-  enabled: boolean;
-};
+// Mock @gorhom/bottom-sheet
+jest.mock("@gorhom/bottom-sheet", () => require("@gorhom/bottom-sheet/mock"));
 
+// Mock React Native Async Storage
 jest.mock("@react-native-async-storage/async-storage", () => {
   return {
     getItem: jest.fn(),
@@ -23,6 +18,7 @@ jest.mock("@react-native-async-storage/async-storage", () => {
   };
 });
 
+// Mock WalletConnect Web3Modal, and make it return dummy components during tests
 jest.mock("@web3modal/wagmi-react-native", () => {
   const actual = jest.requireActual("@web3modal/wagmi-react-native");
 
@@ -33,12 +29,12 @@ jest.mock("@web3modal/wagmi-react-native", () => {
   };
 });
 
-jest.mock("@gorhom/bottom-sheet", () => require("@gorhom/bottom-sheet/mock"));
-
 export function MockConnectButton() {
   const { isConnected, address } = useAccount();
   const { connect, connectors } = useConnect();
 
+  // During tests, mock the Connect Button to automatically connect to the first connector
+  // instead of showing the WalletConnect Modal
   return (
     <Pressable
       role="button"

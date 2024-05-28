@@ -59,8 +59,7 @@ function HomeScreen() {
   );
 
   const { isConnected, address } = useAccount();
-
-  const { data: balance, isFetched: isBalanceFetched } = useBalance({
+  const { data: balance, isSuccess: isBalanceSuccess } = useBalance({
     address,
   });
   const isInsufficientBalance = (balance?.value ?? 0) < TX_PRICE;
@@ -110,7 +109,7 @@ function HomeScreen() {
   }, [txSuccess]);
 
   useEffect(() => {
-    if (selectedContact && isBalanceFetched && isInsufficientBalance) {
+    if (selectedContact && isBalanceSuccess && isInsufficientBalance) {
       toast.show("Insufficient balance ⚠️", {
         type: "warning",
       });

@@ -14,8 +14,10 @@ import { WagmiConfig } from "wagmi";
 import RootNavigator from "./src/navigation/RootNavigator";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+// Web3Modal projectId
 const projectId = process.env.EXPO_PUBLIC_WALLETCONNECT_CLOUD_PROJECT_ID ?? "";
 
+// Web3Modal metadata
 const metadata = {
   name: "React Native Web3 Testing",
   description: "React Native Web3 Testing Example",
@@ -27,10 +29,13 @@ const metadata = {
   },
 };
 
+// Choose chains to enable
 const chains = [mainnet, sepolia];
 
+// Use Web3Modal's utils to create the Wagmi config and attach to Web3Modal
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
+// Init Web3Modal instance
 createWeb3Modal({
   projectId,
   chains,
@@ -41,6 +46,7 @@ createWeb3Modal({
 export default function App() {
   return (
     // TODO: Fix TS error
+    // Pass wagmiConfig to the Wagmi Provider
     <WagmiConfig config={wagmiConfig}>
       <StatusBar style="auto" />
       <Web3Modal />

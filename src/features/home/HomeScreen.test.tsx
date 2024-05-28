@@ -1,5 +1,5 @@
 import { screen, userEvent } from "@testing-library/react-native";
-import { Hex, parseEther } from "viem";
+import { Hex } from "viem";
 import * as wagmi from "wagmi";
 import { useWaitForTransactionFailAfter200ms } from "../../test/mocks";
 import {
@@ -75,36 +75,7 @@ test("transaction succeeds", async () => {
   expect(successToast).toBeOnTheScreen();
 });
 
-test("transaction fails before being sent - insufficient balance", async () => {
-  // Manually set the balance of the test account to 0, to simulate insufficient balance error
-  await testClient.setBalance({
-    address: TEST_ACCOUNTS[0].address,
-    value: 0n,
-  });
-
-  renderWithProviders();
-  await connectWallet(user);
-  await pressFirstContact(user);
-
-  // A bottom sheet appears with the contact's details and transaction info
-  const message = screen.getByText(`Send 0.001 ETH to ${CONTACTS[0].name}`);
-  expect(message).toBeOnTheScreen();
-
-  // Find the confirm button
-  const confirmButton = screen.getByRole("button", { name: /confirm/i });
-
-  // Button should be disabled if balance is insufficient
-  expect(confirmButton).toBeOnTheScreen();
-  expect(confirmButton).toBeDisabled();
-
-  // Error toast should appear
-  const insufficientBalanceToast = await screen.findByText(
-    /insufficient balance/i
-  );
-  expect(insufficientBalanceToast).toBeOnTheScreen();
-});
-
-test("transaction fails after being sent", async () => {
+test("transaction fails", async () => {
   // Mock the useWaitForTransaction hook to fail after 200ms, simulating a failed transaction
   const spy = jest
     .spyOn(wagmi, "useWaitForTransaction")
@@ -137,8 +108,37 @@ test("transaction fails after being sent", async () => {
   const failureToast = await screen.findByText(/transaction failed/i);
   expect(failureToast).toBeOnTheScreen();
 
-  // Restore mock
+  // Restore mock, so it doesn't affect our next tests
   spy.mockRestore();
+});
+
+test("insufficient balance", async () => {
+  // Manually set the balance of the test account to 0, to simulate insufficient balance error
+  await testClient.setBalance({
+    address: TEST_ACCOUNTS[0].address,
+    value: 0n,
+  });
+
+  renderWithProviders();
+  await connectWallet(user);
+  await pressFirstContact(user);
+
+  // A bottom sheet appears with the contact's details and transaction info
+  const message = screen.getByText(`Send 0.001 ETH to ${CONTACTS[0].name}`);
+  expect(message).toBeOnTheScreen();
+
+  // Find the confirm button
+  const confirmButton = screen.getByRole("button", { name: /confirm/i });
+
+  // Button should be disabled if balance is insufficient
+  expect(confirmButton).toBeOnTheScreen();
+  expect(confirmButton).toBeDisabled();
+
+  // Error toast should appear
+  const insufficientBalanceToast = await screen.findByText(
+    /insufficient balance/i
+  );
+  expect(insufficientBalanceToast).toBeOnTheScreen();
 });
 
 test("confirm button should disable while loading", async () => {
