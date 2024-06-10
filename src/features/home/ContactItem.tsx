@@ -1,10 +1,11 @@
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
+import { Address } from "viem";
 
 export type Contact = {
   id: string;
   name: string;
-  address: string;
+  address: Address;
 };
 
 type ContactItemProps = {
