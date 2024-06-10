@@ -1,21 +1,25 @@
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { render } from "@testing-library/react-native";
 import { Web3Modal } from "@web3modal/wagmi-react-native";
-import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ToastProvider } from "react-native-toast-notifications";
 import {
   Address,
-  PublicClient,
+  Client,
   createTestClient,
   http,
   publicActions,
   walletActions,
 } from "viem";
 import { foundry } from "viem/chains";
-import { WagmiConfig, createConfig } from "wagmi";
-import { MockConnector } from "wagmi/connectors/mock";
+import { WagmiProvider, createConfig } from "wagmi";
+import { mock } from "wagmi/connectors";
 import RootNavigator from "../navigation/RootNavigator";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Setup QueryClient
+const queryClient = new QueryClient();
 
 // Choose chains to use while testing. Foundry will point to Anvil
 const chains = [foundry];
@@ -45,32 +49,34 @@ export const testClient = createTestClient({
 
 export function renderWithProviders() {
   // Create a Wagmi Config specifically for testing
-  // Pass the testClient as the connector walletClient
-  // Pass the testClient as the config publicClient
   const testConfig = createConfig({
+    chains: [foundry],
     connectors: [
-      new MockConnector({
-        chains,
-        options: {
-          walletClient: testClient,
-        },
+      mock({
+        accounts: [TEST_ACCOUNTS[0].address],
       }),
     ],
-    publicClient: testClient as PublicClient,
+    client() {
+      return testClient as Client;
+    },
+    // Disable multiInjectedProviderDiscovery because it uses browser APIs
+    multiInjectedProviderDiscovery: false,
   });
 
   return render(
     // Pass the test Wagmi Config to the Wagmi Provider
-    <WagmiConfig config={testConfig}>
-      <Web3Modal />
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
-          {/* Use smaller durations for the Toast library to speed up tests */}
-          <ToastProvider duration={1000} animationDuration={0}>
-            <RootNavigator />
-          </ToastProvider>
-        </NavigationContainer>
-      </GestureHandlerRootView>
-    </WagmiConfig>
+    <WagmiProvider config={testConfig}>
+      <QueryClientProvider client={queryClient}>
+        <Web3Modal />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <NavigationContainer>
+            {/* Use smaller durations for the Toast library to speed up tests */}
+            <ToastProvider duration={1000} animationDuration={0}>
+              <RootNavigator />
+            </ToastProvider>
+          </NavigationContainer>
+        </GestureHandlerRootView>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }

@@ -9,9 +9,9 @@ import { parseEther } from "viem";
 import {
   useAccount,
   useBalance,
-  usePrepareSendTransaction,
+  useEstimateGas,
   useSendTransaction,
-  useWaitForTransaction,
+  useWaitForTransactionReceipt,
 } from "wagmi";
 import TransactionModal from "../transaction/TransactionModal";
 import ContactItem, { Contact } from "./ContactItem";
@@ -47,7 +47,7 @@ export const CONTACTS = [
     name: "Test Account",
     address: "0x9247Ab385Bee424db5B09B696864867a53A77f1A",
   },
-];
+] satisfies Contact[];
 
 const TX_PRICE = parseEther("0.0001");
 
@@ -64,23 +64,25 @@ function HomeScreen() {
   });
   const isInsufficientBalance = (balance?.value ?? 0) < TX_PRICE;
 
-  const { config } = usePrepareSendTransaction({
-    to: selectedContact?.address ?? "",
+  const { data: gas } = useEstimateGas({
+    to: selectedContact?.address ?? "0x",
     value: TX_PRICE,
-    enabled: !!selectedContact,
+    query: {
+      enabled: !!selectedContact,
+    },
   });
 
   const {
-    data: transaction,
+    data: hash,
     sendTransaction,
     error: sendError,
-  } = useSendTransaction(config);
+  } = useSendTransaction();
 
   const {
     isError: txError,
     isLoading: txLoading,
     isSuccess: txSuccess,
-  } = useWaitForTransaction(transaction);
+  } = useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
     if (txLoading) {
@@ -132,6 +134,16 @@ function HomeScreen() {
     bottomSheetModalRef.current?.present();
   };
 
+  const onConfirm = () => {
+    if (selectedContact) {
+      sendTransaction({
+        gas,
+        to: selectedContact.address,
+        value: TX_PRICE,
+      });
+    }
+  };
+
   if (!isConnected) {
     return (
       <View style={styles.container}>
@@ -160,7 +172,7 @@ function HomeScreen() {
           ref={bottomSheetModalRef}
           contact={selectedContact}
           disabled={isInsufficientBalance || txLoading || !sendTransaction}
-          onConfirm={() => sendTransaction?.()}
+          onConfirm={onConfirm}
         />
       </BottomSheetModalProvider>
     </View>

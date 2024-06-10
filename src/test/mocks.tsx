@@ -18,6 +18,16 @@ jest.mock("@react-native-async-storage/async-storage", () => {
   };
 });
 
+// This mock doesn't actually change any implementation, it's just necessary to be able to `spyOn` during tests
+jest.mock("wagmi", () => {
+  const actual = jest.requireActual("wagmi");
+
+  return {
+    __esModule: true,
+    ...actual,
+  };
+});
+
 // Mock WalletConnect Web3Modal, and make it return dummy components during tests
 jest.mock("@web3modal/wagmi-react-native", () => {
   const actual = jest.requireActual("@web3modal/wagmi-react-native");
@@ -45,7 +55,7 @@ export function MockConnectButton() {
   );
 }
 
-export function useWaitForTransactionFailAfter200ms() {
+export function useWaitForTransactionReceiptFailAfter200ms() {
   const [state, setState] = MockReact.useState({
     isLoading: false,
     isSuccess: false,

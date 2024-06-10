@@ -1,7 +1,7 @@
 import { screen, userEvent } from "@testing-library/react-native";
 import { Hex } from "viem";
 import * as wagmi from "wagmi";
-import { useWaitForTransactionFailAfter200ms } from "../../test/mocks";
+import { useWaitForTransactionReceiptFailAfter200ms } from "../../test/mocks";
 import {
   TEST_ACCOUNTS,
   renderWithProviders,
@@ -78,9 +78,9 @@ test("transaction succeeds", async () => {
 test("transaction fails", async () => {
   // Mock the useWaitForTransaction hook to fail after 200ms, simulating a failed transaction
   const spy = jest
-    .spyOn(wagmi, "useWaitForTransaction")
+    .spyOn(wagmi, "useWaitForTransactionReceipt")
     // @ts-expect-error mockImplementation is not typed
-    .mockImplementation(useWaitForTransactionFailAfter200ms);
+    .mockImplementation(useWaitForTransactionReceiptFailAfter200ms);
 
   renderWithProviders();
   await connectWallet(user);
